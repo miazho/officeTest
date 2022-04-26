@@ -1,0 +1,28 @@
+# 正则替换中文
+SET NewVar TO $'''3423.45万元人民币'''
+Text.Replace Text: NewVar TextToFind: $'''[\\u4e00-\\u9fa5]''' IsRegEx: True IgnoreCase: False ReplaceWith: $'''%''%''' ActivateEscapeSequences: False Result=> Replaced
+# 复制表格格式及内容
+Excel.LaunchExcel.LaunchAndOpenUnderExistingProcess Path: $'''C:\\Users\\ptrrr\\Desktop\\2-资产咨询明细表等.xlsx''' Visible: True ReadOnly: True Instance=> ExcelInstance
+Excel.SetActiveWorksheet.ActivateWorksheetByName Instance: ExcelInstance Name: $'''明细表'''
+Excel.CopyCellsFromExcel.CopyCells Instance: ExcelInstance StartColumn: $'''a''' StartRow: 5 EndColumn: $'''i''' EndRow: 5
+LOOP LoopIndex FROM 1 TO 5 STEP 1
+    Excel.PasteCellsToExcel.PasteAt Instance: ExcelInstance Column: $'''a''' Row: LoopIndex + 5
+END
+# 数据库连接
+Database.Connect ConnectionString: $'''Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\\资产评估用模板-不要修改\\项目汇总表.xlsx;Extended Properties=\"Excel 12.0 Xml;HDR=YES\";''' Connection=> SQLConnection
+Database.ExecuteSqlStatement.Execute Connection: SQLConnection Statement: $'''insert into [项目数据汇总$] (相关企业简称, 业务渠道, 产权持有人) values ( \'sdfgf测\', \'d中行\', \'某某 d公司\')''' Timeout: 30 Result=> QueryResult
+Database.ExecuteSqlStatement.Execute Connection: SQLConnection Statement: $'''select * from [项目数据汇总$]''' Timeout: 30 Result=> QueryResult
+Database.Close Connection: SQLConnection
+Database.Connect ConnectionString: $'''Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\\资产评估用模板-不要修改\\Database.accdb;Persist Security Info=False''' Connection=> SQLConnection
+Database.Close Connection: SQLConnection
+
+# [ControlRepository][PowerAutomateDesktop]
+
+{
+  "ControlRepositorySymbols": [],
+  "ImageRepositorySymbol": {
+    "Name": "imgrepo",
+    "ImportMetadata": {},
+    "Repository": "{\r\n  \"Folders\": [],\r\n  \"Images\": [],\r\n  \"Version\": 1\r\n}"
+  }
+}
