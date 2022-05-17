@@ -1,0 +1,54 @@
+从正在运行word程序操作：
+Set Word = GetObject(,"Word.Application")
+-----------------------------------------
+替换正文：
+Set Word = CreateObject("Word.Application")
+Word.Visible = True
+
+'Open the document
+Set WordDoc = Word.Documents.open("%ProjectTablePath%")
+Set objFind = Word.ActiveWindow.Selection.Find
+
+With objFind
+.Text = "CompanyName"
+.Replacement.Text = "XXX有限公司"
+.Forward = True
+.Wrap = wdFindContinue
+.MatchWildcards = True
+.Execute,,,,,,,,,,2
+End With
+------------------------------------
+word转PDF
+Word.ActiveWindow.Document.ExportAsFixedFormat "%PdfFile%",17
+
+------------------------------------------------
+word修改页眉文字
+Word.ActiveWindow.Document.Sections(2).Headers(1).Range.Text = "%NewVar2%拟质押贷款所涉及的无形资产的市场价值咨询"
+--------------------------------------
+保存并退出
+Set Word = GetObject(,"Word.Application")
+
+If Word.ActiveWindow.Document.Saved = False Then Word.ActiveWindow.Document.Save
+Word.ActiveWindow.Document.Close
+Word.Quit
+---------------------------------------------------------------------
+excel整个工作簿转PDF
+Set Excel = GetObject(,"Excel.Application")
+Excel.ActiveWorkbook.ExportAsFixedFormat 0, "%PdfFile%" ,0, 1, 0,,,0
+
+---------------------------------------------------------------------
+excel转PDF
+Dim Excel
+Dim ExcelDoc
+
+'Opens the Excel file'
+Set Excel = CreateObject("Excel.Application")
+Set ExcelDoc = Excel.Workbooks.open("%ExcelFile%")
+
+'Creates the pdf file'
+Excel.ActiveSheet.ExportAsFixedFormat 0, "%PdfFile%" ,0, 1, 0,,,0
+
+'Closes the Excel file'
+Excel.ActiveWorkbook.Close
+Excel.Application.Quit
+------------------------------------
