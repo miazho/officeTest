@@ -1,12 +1,13 @@
-从正在运行word程序操作：
-Set Word = GetObject(,"Word.Application")
------------------------------------------
-替换正文：
+
+加载已打开的word文件：
+Set Word = GetObject("%WordFile%")
+
+重新打开word文件：
 Set Word = CreateObject("Word.Application")
 Word.Visible = True
-
-'Open the document
 Set WordDoc = Word.Documents.open("%ProjectTablePath%")
+-----------------------------------------
+替换正文：
 Set objFind = Word.ActiveWindow.Selection.Find
 
 With objFind
@@ -18,23 +19,47 @@ With objFind
 .Execute,,,,,,,,,,2
 End With
 ------------------------------------
+查找并选定文本：
+Set objFind = Word.ActiveWindow.Selection.Find
+objFind.Execute "ZLTable",,,,,,,,,,wdReplaceNone
+
+------------------------------------------------
 word转PDF
 Word.ActiveWindow.Document.ExportAsFixedFormat "%PdfFile%",17
 
 ------------------------------------------------
 word修改页眉文字
 Word.ActiveWindow.Document.Sections(2).Headers(1).Range.Text = "%NewVar2%拟质押贷款所涉及的无形资产的市场价值咨询"
+
+---------------------------------------------------------------------------------------
+更新页码
+Word.ActiveDocument.TablesOfContents(1).UpdatePageNumbers
+Word.TablesOfContents(1).UpdatePageNumbers
+---------------------------------------------------------------------------------------
+自动文本转表格：
+Set Word = GetObject("C:\Users\Mr Xu\Desktop\专利权咨询报告_预评.doc")
+Word.Bookmarks("ZLTable").Select
+Word.ActiveWindow.Selection.ConvertToTable 1,,,,,,,,,,,,,1
+Set Slt = Word.ActiveWindow.Selection
+With Slt.Tables(1)
+.Style = "网格型"
+end with
+with Slt
+.ParagraphFormat.Alignment = 1
+.Cells.VerticalAlignment = 1
+end with
+Slt.Tables(1).Columns(1).SetWidth 26.7, 2
 --------------------------------------
 保存并退出
-Set Word = GetObject(,"Word.Application")
+Set Word = GetObject("%WordFile%")
 
 If Word.ActiveWindow.Document.Saved = False Then Word.ActiveWindow.Document.Save
 Word.ActiveWindow.Document.Close
 Word.Quit
 ---------------------------------------------------------------------
 excel整个工作簿转PDF
-Set Excel = GetObject(,"Excel.Application")
-Excel.ActiveWorkbook.ExportAsFixedFormat 0, "%PdfFile%" ,0, 1, 0,,,0
+Set Excel = GetObject("%ExcelFile%")
+Excel.ExportAsFixedFormat 0, "%PdfFile%" ,0, 1, 0,,,0
 
 ---------------------------------------------------------------------
 excel转PDF
@@ -42,11 +67,11 @@ Dim Excel
 Dim ExcelDoc
 
 'Opens the Excel file'
-Set Excel = CreateObject("Excel.Application")
+Set Excel = CreateObject("%excelFile%")
 Set ExcelDoc = Excel.Workbooks.open("%ExcelFile%")
 
 'Creates the pdf file'
-Excel.ActiveSheet.ExportAsFixedFormat 0, "%PdfFile%" ,0, 1, 0,,,0
+Excel.Worksheets(1~?).ExportAsFixedFormat 0, "%PdfFile%" ,0, 1, 0,,,0
 
 'Closes the Excel file'
 Excel.ActiveWorkbook.Close
